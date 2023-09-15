@@ -3,6 +3,11 @@ include("hw01-gradle")
 include("hw04-containers")
 include("hw06-reflection")
 include("hw08-garbage-collector")
+include("hw12-cash-machine")
+include("hw15-structural-patterns")
+include("hw18-jdbc")
+include("hw18-jdbc:demo")
+include("hw18-jdbc:homework")
 
 pluginManagement {
     val jgitver: String by settings
@@ -25,5 +30,4 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-include("hw12-cash-machine")
-include("hw15-structural-patterns")
+
