@@ -6,6 +6,8 @@ import java.util.List;
 
 /** "Разбирает" объект на составные части */
 public interface EntityClassMetaData<T> {
+    Class<T> getTypeClass();
+
     String getName();
 
     Constructor<T> getConstructor();
