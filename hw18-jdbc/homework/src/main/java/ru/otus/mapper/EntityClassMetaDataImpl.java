@@ -13,13 +13,11 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     private Class<T> typeClass;
 
+    private List<Field> declaredFields;
+
     public EntityClassMetaDataImpl(Class<T> typeClass) {
         this.typeClass = typeClass;
-    }
-
-    @Override
-    public Class<T> getTypeClass() {
-        return typeClass;
+        this.declaredFields = List.of(typeClass.getDeclaredFields());
     }
 
     @Override
@@ -34,7 +32,6 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public Constructor<T> getConstructor() {
-        //Какой именно конструктор брать, если в объекте их несколько?
         Constructor<?>[] declaredConstructors = typeClass.getDeclaredConstructors();
         Constructor<?> result = Arrays.stream(declaredConstructors)
                 .filter(constructor -> constructor.getParameterCount() == getAllFields().size())
@@ -44,7 +41,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public Field getIdField() {
-        Field idField = Arrays.stream(typeClass.getDeclaredFields())
+        Field idField = declaredFields.stream()
                 .filter(field -> field.getAnnotation(Id.class) != null)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Отсутсвует аннотация @Id в классе!"));
@@ -53,12 +50,12 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public List<Field> getAllFields() {
-        return Arrays.stream(typeClass.getDeclaredFields()).collect(Collectors.toList());
+        return declaredFields;
     }
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        return Arrays.stream(typeClass.getDeclaredFields())
+        return declaredFields.stream()
                 .filter(field -> field.getAnnotation(Id.class) == null)
                 .collect(Collectors.toList());
     }

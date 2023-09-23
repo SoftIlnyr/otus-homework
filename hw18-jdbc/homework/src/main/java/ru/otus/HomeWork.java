@@ -30,12 +30,10 @@ public class HomeWork {
         var dbExecutor = new DbExecutorImpl();
 
         // Работа с клиентом
-        // я не нашел как из типа T доставать тип класса, поиск по интернету тоже ответов не дал
-        // пришлось подавать тип класса вручную
         EntityClassMetaData<Client> entityClassMetaDataClient = new EntityClassMetaDataImpl<>(Client.class);
         EntitySQLMetaData entitySQLMetaDataClient = new EntitySQLMetaDataImpl(entityClassMetaDataClient);
         var dataTemplateClient =
-                new DataTemplateJdbc<Client>(
+                new DataTemplateJdbc<>(
                         dbExecutor,
                         entitySQLMetaDataClient,
                         entityClassMetaDataClient); // реализация DataTemplate, универсальная

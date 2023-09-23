@@ -91,10 +91,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
             List<Object> fieldValueList = new ArrayList<>();
 
             for (Field field : entityClassMetaData.getFieldsWithoutId()) {
-                boolean isAccessible = field.canAccess(type);
-                field.setAccessible(true);
-                Object value = field.get(type);
-                field.setAccessible(isAccessible);
+                Object value = getFieldValue(type, field);
                 fieldValueList.add(value);
             }
 
@@ -109,24 +106,26 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         }
     }
 
+    private static <T> Object getFieldValue(T type, Field field) throws IllegalAccessException {
+        boolean isAccessible = field.canAccess(type);
+        field.setAccessible(true);
+        Object value = field.get(type);
+        field.setAccessible(isAccessible);
+        return value;
+    }
+
     @Override
     public void update(Connection connection, T type) {
         try {
             List<Object> fieldValueList = new ArrayList<>();
 
             for (Field field : entityClassMetaData.getFieldsWithoutId()) {
-                boolean isAccessible = field.canAccess(type);
-                field.setAccessible(true);
-                Object value = field.get(type);
-                field.setAccessible(isAccessible);
+                Object value = getFieldValue(type, field);
                 fieldValueList.add(value);
             }
 
             Field idField = entityClassMetaData.getIdField();
-            boolean isAccessible = idField.canAccess(type);
-            idField.setAccessible(true);
-            Object idValue = idField.get(type);
-            idField.setAccessible(isAccessible);
+            Object idValue = getFieldValue(type, idField);
 
             fieldValueList.add(idValue);
 
