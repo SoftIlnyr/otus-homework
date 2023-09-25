@@ -8,6 +8,7 @@ include("hw15-structural-patterns")
 include("hw18-jdbc")
 include("hw18-jdbc:demo")
 include("hw18-jdbc:homework")
+include("hw21-jpql")
 
 pluginManagement {
     val jgitver: String by settings
@@ -30,4 +31,3 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-
