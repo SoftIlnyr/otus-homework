@@ -9,6 +9,7 @@ include("hw18-jdbc")
 include("hw18-jdbc:demo")
 include("hw18-jdbc:homework")
 include("hw21-jpql")
+include("hw25-di")
 
 pluginManagement {
     val jgitver: String by settings
