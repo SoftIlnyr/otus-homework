@@ -37,6 +37,7 @@ allprojects {
     val asm: String by project
     val glassfishJson: String by project
     val lombok: String by project
+    val ehcache: String by project
 
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
@@ -46,6 +47,7 @@ allprojects {
                 mavenBom("org.testcontainers:testcontainers-bom:$testcontainersBom")
                 mavenBom("com.google.protobuf:protobuf-bom:$protobufBom")
             }
+            dependency("org.ehcache:ehcache:$ehcache")
             dependency("com.google.guava:guava:$guava")
             dependency("org.openjdk.jmh:jmh-core:$jmh")
             dependency("org.openjdk.jmh:jmh-generator-annprocess:$jmh")
