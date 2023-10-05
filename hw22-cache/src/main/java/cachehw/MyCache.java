@@ -1,30 +1,55 @@
 package cachehw;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.WeakHashMap;
+
 public class MyCache<K, V> implements HwCache<K, V> {
-    // Надо реализовать эти методы
+
+    WeakHashMap<K, V> map;
+    List<HwListener<K, V>> listenerList;
+
+    enum MyCacheAction {
+        PUT,
+        GET,
+        REMOVE
+    }
+
+    public MyCache() {
+        map = new WeakHashMap<>();
+        listenerList = new ArrayList<>();
+    }
 
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        map.put(key, value);
+        notifyListeners(key, value, MyCacheAction.PUT);
     }
 
     @Override
     public void remove(K key) {
-        throw new UnsupportedOperationException();
+        V value = map.remove(key);
+        notifyListeners(key, value, MyCacheAction.REMOVE);
     }
 
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        V value = map.get(key);
+        notifyListeners(key, value, MyCacheAction.GET);
+        return value;
     }
 
     @Override
     public void addListener(HwListener<K, V> listener) {
-        throw new UnsupportedOperationException();
+        listenerList.add(listener);
     }
 
     @Override
     public void removeListener(HwListener<K, V> listener) {
-        throw new UnsupportedOperationException();
+        listenerList.remove(listener);
+    }
+
+    private void notifyListeners(K key, V value, MyCacheAction action) {
+        listenerList.forEach(listener -> listener.notify(key, value, action.name()));
     }
 }
