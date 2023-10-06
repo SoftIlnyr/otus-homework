@@ -1,10 +1,9 @@
-package ru.otus.crm.service;
+package ru.otus.crm.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.otus.base.AbstractHibernateTest;
 import ru.otus.crm.model.Address;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.model.Phone;
@@ -24,11 +23,11 @@ class DbServiceClientTest extends AbstractHibernateTest {
                 new Phone(null, "14-666-333")));
 
         // when
-        var savedClient = dbServiceClient.saveClient(client);
+        var savedClient = clientDao.saveClient(client);
         System.out.println(savedClient);
 
         // then
-        var loadedSavedClient = dbServiceClient.getClient(savedClient.getId());
+        var loadedSavedClient = clientDao.getClient(savedClient.getId());
         assertThat(loadedSavedClient)
                 .isPresent()
                 .get()
@@ -38,15 +37,15 @@ class DbServiceClientTest extends AbstractHibernateTest {
         // when
         var savedClientUpdated = loadedSavedClient.get();
         savedClientUpdated.setName("updatedName");
-        dbServiceClient.saveClient(savedClientUpdated);
+        clientDao.saveClient(savedClientUpdated);
 
         // then
-        var loadedClient = dbServiceClient.getClient(savedClientUpdated.getId());
+        var loadedClient = clientDao.getClient(savedClientUpdated.getId());
         assertThat(loadedClient).isPresent().get().usingRecursiveComparison().isEqualTo(savedClientUpdated);
         System.out.println(loadedClient);
 
         // when
-        var clientList = dbServiceClient.findAll();
+        var clientList = clientDao.findAll();
 
         // then
         assertThat(clientList.size()).isEqualTo(1);

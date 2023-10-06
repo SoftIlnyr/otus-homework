@@ -2,6 +2,7 @@ package ru.otus.crm.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,11 +33,13 @@ public class Client implements Cloneable {
     public Client(String name) {
         this.id = null;
         this.name = name;
+        this.phones = new ArrayList<>();
     }
 
     public Client(Long id, String name) {
         this.id = id;
         this.name = name;
+        this.phones = new ArrayList<>();
     }
 
     public <E> Client(Long id, String name, Address address, List<Phone> phones) {
