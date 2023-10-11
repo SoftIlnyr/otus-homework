@@ -1,10 +1,10 @@
-package ru.otus.crm.service;
+package ru.otus.crm.dao;
 
 import java.util.List;
 import java.util.Optional;
 import ru.otus.crm.model.Client;
 
-public interface DBServiceClient {
+public interface ClientDao {
 
     Client saveClient(Client client);
 

@@ -1,4 +1,4 @@
-package ru.otus.crm.service;
+package ru.otus.crm.dao;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,13 +8,13 @@ import ru.otus.core.repository.DataTemplate;
 import ru.otus.core.sessionmanager.TransactionManager;
 import ru.otus.crm.model.Client;
 
-public class DbServiceClientImpl implements DBServiceClient {
-    private static final Logger log = LoggerFactory.getLogger(DbServiceClientImpl.class);
+public class DbClientDao implements ClientDao {
+    private static final Logger log = LoggerFactory.getLogger(DbClientDao.class);
 
     private final DataTemplate<Client> clientDataTemplate;
     private final TransactionManager transactionManager;
 
-    public DbServiceClientImpl(TransactionManager transactionManager, DataTemplate<Client> clientDataTemplate) {
+    public DbClientDao(TransactionManager transactionManager, DataTemplate<Client> clientDataTemplate) {
         this.transactionManager = transactionManager;
         this.clientDataTemplate = clientDataTemplate;
     }
