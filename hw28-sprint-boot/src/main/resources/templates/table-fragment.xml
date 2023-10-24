@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<response xmlns:th="http://www.thymeleaf.org">
+    <tableHtml>
+        <table>
+            <tr>
+                <th>Имя пользователя</th>
+                <th>Адрес</th>
+                <th>Номер телефона</th>
+            </tr>
+            <tr th:each="client : ${clients}"
+                th:templateId="${client.getUserId()}">
+
+                <td th:text="${client.getUserName()}"/>
+                <td th:text="${client.getUserAddress()}"/>
+                <td th:text="${client.getUserPhoneNumber()}"/>
+            </tr>
+        </table>
+    </tableHtml>
+</response>
