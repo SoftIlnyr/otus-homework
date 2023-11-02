@@ -1,0 +1,72 @@
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Пользователи</title>
+    <script>
+        class UserData {
+            constructor(userName, userAddress, userPhoneNumber) {
+                this.userName = userName;
+                this.userAddress = userAddress;
+                this.userPhoneNumber = userPhoneNumber;
+            }
+        }
+
+        function createUser() {
+            let userName = document.getElementById("userName").value;
+            let userAddress = document.getElementById("userAddress").value;
+            let userPhoneNumber = document.getElementById("userPhoneNumber").value;
+
+            let userData = new UserData(userName, userAddress, userPhoneNumber);
+            console.log(userData);
+            let data = JSON.stringify(userData);
+            console.log(data);
+
+            fetch("/api/users/create", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            })
+                .then(responce => {
+                    if (responce.status === 200) {
+                        console.log("Пользователь успешно сохранен");
+                    } else if (responce.status === 500) {
+                        console.error(responce.json())
+                    } else {
+                        console.warn("Ошибки при сохранении пользователя")
+                    }
+                });
+        }
+
+        function getAllUsers() {
+            fetch("/admin/users/getAll", {
+                method: "GET"
+            })
+                .then(response => response.text().then(responseText => handleSuccessResponse(responseText)));
+        }
+
+        function handleSuccessResponse(responseText){
+            const userDataContainer = document.getElementById("userDataContainer");
+            const oParser = new DOMParser();
+            const oDOM = oParser.parseFromString(responseText, "text/xml");
+            let tableValue = oDOM.evaluate('/response/tableHtml', oDOM, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            tableValue = tableValue.singleNodeValue;
+            userDataContainer.innerHTML = tableValue.innerHTML;
+        }
+    </script>
+</head>
+
+<body>
+<h4>Создать нового пользователя</h4>
+<label for="userName">Имя пользователя</label><br><input type="text" name="userName" id="userName"><br>
+<label for="userAddress">Адрес</label><br><input type="text" name="userAddress" id="userAddress"><br>
+<label for="userPhoneNumber">Телефон</label><br><input type="text" name="userPhoneNumber" id="userPhoneNumber"><br>
+<button onclick="createUser()">Сохранить</button>
+<br>
+<button onclick="getAllUsers()">Получить всех пользователей</button>
+<div id="userDataContainer">
+</div>
+
+</body>
+</html>
