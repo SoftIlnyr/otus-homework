@@ -12,48 +12,26 @@ public class PingPongCounter {
 
     private static final Logger logger = LoggerFactory.getLogger(PingPongCounter.class);
 
-    private final int MIN_VALUE;
-    private final int MAX_VALUE;
+    private final List<Counter> counters;
+    private  List<String> threadNames;
+    private String currentThreadName;
+    private Integer currentThreadIndex;
 
-    private boolean positionDirection = true;
-
-    private int currentValue;
-
-    private static List<String> threadNames;
-
-    private static String currentThreadName;
-    private static Integer currentThreadIndex;
-
-    public PingPongCounter() {
-        this(0, 10);
+    public PingPongCounter(Counter... counters) {
+        this.counters = Arrays.asList(counters);
     }
 
-    public PingPongCounter(int min_value, int max_value) {
-        this.MIN_VALUE = min_value;
-        this.MAX_VALUE = max_value;
-        this.currentValue = min_value;
-    }
-
-    public synchronized void count() {
+    private synchronized void pingPong(Counter counter) {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-
-                logger.info("Waiting for thread {}", currentThreadName);
-
-                while (true) {
-                    String currentThreadName = Thread.currentThread().getName();
-                    if (!currentThreadName.equals(PingPongCounter.currentThreadName))
-                        break;
-                    logger.info("Thread {} is waiting", currentThreadName);
+                while (!Thread.currentThread().getName().equals(currentThreadName)) {
                     this.wait();
                 }
-                logger.info("Entered thread {}", currentThreadName);
 
-                changeValue();
+                counter.changeValue();
 
                 currentThreadIndex = (currentThreadIndex + 1) % threadNames.size();
                 currentThreadName = threadNames.get(currentThreadIndex);
-                logger.info("Set new thread {}", currentThreadName);
 
                 notifyAll();
                 Thread.sleep(1000);
@@ -62,35 +40,23 @@ public class PingPongCounter {
             }
         }
     }
+    public synchronized void count() {
 
-    private void changeValue() {
-        if (positionDirection) {
-            if (currentValue >= MAX_VALUE) {
-                positionDirection = false;
-                currentValue--;
-            }
-            currentValue++;
-        } else {
-            if (currentValue <= MIN_VALUE) {
-                positionDirection = true;
-                currentValue++;
-            }
-            currentValue--;
-        }
-        logger.info("Thread {}. Current value: {}", Thread.currentThread().getName(), currentValue);
     }
 
 
     public static void main(String[] args) {
-        PingPongCounter counter1 = new PingPongCounter(0, 10);
-        PingPongCounter counter2 = new PingPongCounter(0, 10);
+        Counter counter1 = new Counter(1, 10);
+        Counter counter2 = new Counter(1, 10);
+        Counter counter3 = new Counter(1, 10);
+        Counter counter4 = new Counter(1, 10);
+        PingPongCounter pingPongCounter = new PingPongCounter(counter1, counter2, counter3, counter4);
+        pingPongCounter.startCounting();
 
-        pingPongCount(counter1, counter2);
     }
 
-    private static void pingPongCount(PingPongCounter... counters) {
-
-        List<Thread> threads = Arrays.stream(counters).map(counter -> new Thread(counter::count)).toList();
+    private void startCounting() {
+        List<Thread> threads = counters.stream().map(counter -> new Thread(() -> pingPong(counter))).toList();
 
         threadNames = threads.stream().map(Thread::getName).collect(Collectors.toList());
         currentThreadIndex = 0;
@@ -100,5 +66,4 @@ public class PingPongCounter {
             thread.start();
         }
     }
-
 }

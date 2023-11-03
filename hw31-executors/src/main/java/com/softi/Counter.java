@@ -37,29 +37,33 @@ public class Counter {
         }
     }
 
-    private void changeValue() {
+    public void changeValue() {
+        logger.info("Thread {}. Current value: {}", Thread.currentThread().getName(), currentValue);
         if (positionDirection) {
             if (currentValue >= MAX_VALUE) {
                 positionDirection = false;
                 currentValue--;
+            } else {
+                currentValue++;
             }
-            currentValue++;
         } else {
             if (currentValue <= MIN_VALUE) {
                 positionDirection = true;
                 currentValue++;
+            } else {
+                currentValue--;
             }
-            currentValue--;
         }
-        logger.info("Thread {}. Current value: {}", Thread.currentThread().getName(), currentValue);
     }
 
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        new Counter(0, 1).count();
 
-        executorService.submit(() -> new Counter(5, 10).count());
-        executorService.submit(() -> new Counter(0, 10).count());
-        executorService.submit(() -> new Counter(10, 20).count());
+//        ExecutorService executorService = Executors.newFixedThreadPool(3);
+//
+//        executorService.submit(() -> new Counter(5, 10).count());
+//        executorService.submit(() -> new Counter(0, 10).count());
+//        executorService.submit(() -> new Counter(10, 20).count());
     }
 
 }
