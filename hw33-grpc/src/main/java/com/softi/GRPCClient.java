@@ -26,7 +26,7 @@ public class GRPCClient {
         long firstValue = 1;
         long lastValue = 100;
 
-        BlockingDeque<CountdownMessage> queue = new LinkedBlockingDeque<>();
+        BlockingDeque<CountdownMessage> queue = new LinkedBlockingDeque<>(1);
 
         var initMessage = StartCountingMessage.newBuilder()
                 .setFirstValue(firstValue)
