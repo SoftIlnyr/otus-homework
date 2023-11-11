@@ -38,6 +38,7 @@ allprojects {
     val glassfishJson: String by project
     val lombok: String by project
     val ehcache: String by project
+    val grpc: String by project
 
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
@@ -54,6 +55,10 @@ allprojects {
             dependency("org.ow2.asm:asm-commons:$asm")
             dependency("org.glassfish:jakarta.json:$glassfishJson")
             dependency("org.projectlombok:lombok:$lombok")
+
+            dependency("io.grpc:grpc-netty:$grpc")
+            dependency("io.grpc:grpc-protobuf:$grpc")
+            dependency("io.grpc:grpc-stub:$grpc")
         }
     }
 
