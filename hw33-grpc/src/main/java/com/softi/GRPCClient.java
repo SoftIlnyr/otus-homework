@@ -2,10 +2,8 @@ package com.softi;
 
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import ru.otus.protobuf.generated.CountdownMessage;
 import ru.otus.protobuf.generated.CountingServiceGrpc;
 import ru.otus.protobuf.generated.StartCountingMessage;
@@ -24,9 +22,9 @@ public class GRPCClient {
         var stub = CountingServiceGrpc.newStub(channel);
 
         long firstValue = 1;
-        long lastValue = 100;
+        long lastValue = 10;
 
-        BlockingDeque<CountdownMessage> queue = new LinkedBlockingDeque<>(1);
+        AtomicLong lastServerValue = new AtomicLong();
 
         var initMessage = StartCountingMessage.newBuilder()
                 .setFirstValue(firstValue)
@@ -36,7 +34,7 @@ public class GRPCClient {
         stub.initCounting(initMessage, new StreamObserver<>() {
             @Override
             public void onNext(CountdownMessage value) {
-                queue.add(value);
+                lastServerValue.set(value.getCurrentServerValue());
             }
 
             @Override
@@ -52,19 +50,16 @@ public class GRPCClient {
 
         new Thread(() -> {
             long currentValue = 0;
-            long currentServerValue = firstValue;
-            while (currentServerValue < lastValue) {
+            long serverValue = firstValue;
+            while (serverValue < lastValue) {
                 try {
                     Thread.sleep(1000);
-                    CountdownMessage countdownMessage = queue.pollLast();
-                    if (countdownMessage != null) {
-                        currentServerValue = countdownMessage.getCurrentServerValue();
+                    serverValue = lastServerValue.getAndSet(0);
+                    if (serverValue != 0) {
                         System.out.println("------------------------------");
-                        System.out.println("Server: " + currentServerValue);
-                        currentValue = currentValue + currentServerValue + 1;
-                    } else {
-                        currentValue = currentValue + 1;
+                        System.out.println("Server: " + serverValue);
                     }
+                    currentValue = currentValue + serverValue + 1;
                     System.out.println("Client: " + currentValue);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
