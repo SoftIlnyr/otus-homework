@@ -15,6 +15,7 @@ include("hw25-di")
 include("hw28-sprint-boot")
 include("hw31-executors")
 include("hw32-concurrentCollections")
+include("hw33-grpc")
 
 pluginManagement {
     val jgitver: String by settings
@@ -37,4 +38,3 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-
